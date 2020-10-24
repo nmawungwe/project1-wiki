@@ -9,6 +9,10 @@ markdowner = Markdown()
 class Search(forms.Form):
     title = forms.CharField(widget=forms.TextInput(attrs={'class': 'search', 'placeholder':'Search'}))
 
+class new_form(forms.Form):
+    title = forms.CharField(label='Title', max_length=100)
+    content = forms.CharField(widget=forms.Textarea)
+
 # def index(request):
 #     return render(request, "encyclopedia/index.html", {
 #         "entries": util.list_entries()
@@ -42,8 +46,45 @@ def index(request):
             return render(request, "encyclopedia/index.html", {"form": form})
     else:
         return render(request, "encyclopedia/index.html", {
-            "entries": util.list_entries(), "form":Search()
+            "titles": util.list_entries(), "form":Search()
         })
 
-  
+
+def query(request, title):
+    article = util.get_entry(title)
+    if article is not None:
+        article_html = markdowner.convert(article)
+        context = {
+            'title' : title,
+            'article' : article_html
+        }
+        return render(request, 'encyclopedia/article.html', context)
+    else:
+        return render(request, 'encyclopedia/no_result.html')
+
+def new_article(request):
+    if request.method == 'POST':
+        form = new_form(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            content = form.cleaned_data['content']
+            articles = util.list_entries()
+            if title in articles:
+                message = "Error, title already exists"
+                context = {'message':message}
+                return render(request, 'encyclopedia/result.html', context)
+            else:
+                util.save_entry(title, content)
+                message = 'Article has been uploaded'
+                context = {'message':message}
+                return render(request, 'encyclopedia/result.html', context)
+        pass  
+    else:
+        return render(request, 'encyclopedia/save_form.html', {"form":new_form()})
+    
+
+
+
+    
+
 
