@@ -3,6 +3,7 @@ from django import forms
 
 from . import util
 from markdown2 import Markdown
+import random
 
 markdowner = Markdown()
 
@@ -99,6 +100,16 @@ def update_article(request, title):
             message = "Article has been updated"
             context = {'message':message}
             return render(request, 'encyclopedia/result.html', context)
+
+def random_article(request):
+    queries = util.list_entries()
+    title = random.choice(queries)
+    article = util.get_entry(title)
+    article_html = markdowner.convert(article)
+    context = {'article': article_html}
+    return render(request, 'encyclopedia/random.html', context)
+
+
     
 
 
