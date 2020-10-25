@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block body %}
+<h1>Articles</h1>
     {% for title in query %}
-    <h1>Found pages:</h1>
     <li><a href=/wiki/{{title}}>{{title}}</a></li>
     {% empty %}
     <h1>No item</h1>

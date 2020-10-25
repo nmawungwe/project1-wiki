@@ -75,12 +75,17 @@ def new_article(request):
             articles = util.list_entries()
             if title in articles:
                 message = "Error, title already exists"
-                context = {'message':message}
-                return render(request, 'encyclopedia/result.html', context)
+                title = 'Error'
+                context = { 'title': title,
+                            'message':message}
+                return render(request, 'encyclopedia/error.html', context)
             else:
                 util.save_entry(title, content)
-                message = 'Article has been uploaded'
-                context = {'message':message}
+                article = util.get_entry(title)
+                article_html = markdowner.convert(article)
+                # message = 'Article has been uploaded'
+                context = { 'title':title,
+                            'article':article_html}
                 return render(request, 'encyclopedia/result.html', context)
         pass  
     else:
@@ -97,8 +102,10 @@ def update_article(request, title):
         if form.is_valid():
             content = form.cleaned_data['textarea']
             util.save_entry(title, content)
-            message = "Article has been updated"
-            context = {'message':message}
+            article = util.get_entry(title)
+            article_html = markdowner.convert(article)
+            # message = "Article has been updated"
+            context = {'article': article_html}
             return render(request, 'encyclopedia/result.html', context)
 
 def random_article(request):
