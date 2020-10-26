@@ -11,8 +11,8 @@ class Search(forms.Form):
     title = forms.CharField(widget=forms.TextInput(attrs={'class': 'search', 'placeholder':'Search article'}))
 
 class New_form(forms.Form):
-    title = forms.CharField(widget=forms.TextInput(attrs={'class':'title', 'placeholder':'Title'}), label='Title')
-    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'content', 'placeholder':'Type your content!'}), label='')
+    title = forms.CharField(widget=forms.TextInput(attrs={'class':'title w-50 p-3', 'placeholder':'Title'}), label='')
+    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'content w-100 p-3', 'placeholder':'Type your content!'}), label='')
 
 class Update(forms.Form):  
     textarea = forms.CharField(widget=forms.Textarea(), label='')
@@ -48,8 +48,8 @@ def index(request):
                     }
                     return render(request, "encyclopedia/query.html", context)
                 else:
-                    context={"form":Search()}
-                    return render(request, "encyclopedia/no_result.html", context)
+                    context={'form':Search()}
+                    return render(request, 'encyclopedia/no_result.html', context)
         else:
             context={
                     "form": form
