@@ -7,4 +7,8 @@
 {% block body %}
     {{ article | safe }}
 
+    <div class="edit">
+        <a href="{% url 'edit' title %}">Edit</a>
+    </div>
+
 {% endblock %}

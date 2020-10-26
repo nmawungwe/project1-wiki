@@ -8,11 +8,11 @@ import random
 markdowner = Markdown()
 
 class Search(forms.Form):
-    title = forms.CharField(widget=forms.TextInput(attrs={'class': 'search', 'placeholder':'Search'}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'class': 'search', 'placeholder':'Search article'}))
 
 class New_form(forms.Form):
-    title = forms.CharField(widget=forms.TextInput(attrs={'class':'title', 'placeholder':'Title'}))
-    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'content', 'placeholder':'Type your content here!'}), label='')
+    title = forms.CharField(widget=forms.TextInput(attrs={'class':'title', 'placeholder':'Title'}), label='Title')
+    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'content', 'placeholder':'Type your content!'}), label='')
 
 class Update(forms.Form):  
     textarea = forms.CharField(widget=forms.Textarea(), label='')
@@ -59,6 +59,7 @@ def query(request, title):
     if article is not None:
         article_html = markdowner.convert(article)
         context = {
+            'form' : Search(),
             'title' : title,
             'article' : article_html
         }
@@ -94,8 +95,9 @@ def new_article(request):
 def update_article(request, title):
     if request.method == 'GET':
         article = util.get_entry(title)
-        context = {'form': Update(initial={'textarea': article}),
-                   'title': title }
+        context = { 'form': Search(),
+                    'form_update': Update(initial={'textarea': article}),
+                    'title': title }
         return render(request, 'encyclopedia/update.html', context)
     else:
         form = Update(request.POST)
@@ -105,7 +107,8 @@ def update_article(request, title):
             article = util.get_entry(title)
             article_html = markdowner.convert(article)
             # message = "Article has been updated"
-            context = {'article': article_html}
+            context = { 'form': Search(),
+                        'article': article_html}
             return render(request, 'encyclopedia/result.html', context)
 
 def random_article(request):
@@ -113,7 +116,9 @@ def random_article(request):
     title = random.choice(queries)
     article = util.get_entry(title)
     article_html = markdowner.convert(article)
-    context = {'article': article_html}
+    context = { 'form': Search(),
+                'title': title,
+                'article': article_html}
     return render(request, 'encyclopedia/random.html', context)
 
 
