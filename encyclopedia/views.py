@@ -38,16 +38,23 @@ def index(request):
                         'title': title,
                         'form': form
                     }
-                    return render(request, 'encyclopedia/result.html', context)
+                    return render(request, 'encyclopedia/article.html', context)
                 if title.lower()in i.lower():
                     query.append(i)
                     context = {
+                        'title': title,
                         'query': query,
                         'form' : Search() 
                     }
-            return render(request, "encyclopedia/query.html", context)
+                    return render(request, "encyclopedia/query.html", context)
+                else:
+                    context={"form":Search()}
+                    return render(request, "encyclopedia/no_result.html", context)
         else:
-            return render(request, "encyclopedia/index.html", {"form": form})
+            context={
+                    "form": form
+            }
+            return render(request, "encyclopedia/index.html", context)
     else:
         return render(request, "encyclopedia/index.html", {
             "titles": util.list_entries(), "form":Search()
@@ -65,7 +72,7 @@ def query(request, title):
         }
         return render(request, 'encyclopedia/article.html', context)
     else:
-        return render(request, 'encyclopedia/no_result.html')
+        return render(request, 'encyclopedia/no_result.html', context)
 
 def new_article(request):
     if request.method == 'POST':
@@ -77,7 +84,8 @@ def new_article(request):
             if title in articles:
                 message = "Error, title already exists"
                 title = 'Error'
-                context = { 'title': title,
+                context = { 'form': Search(),
+                            'title': title,
                             'message':message}
                 return render(request, 'encyclopedia/error.html', context)
             else:
@@ -85,12 +93,14 @@ def new_article(request):
                 article = util.get_entry(title)
                 article_html = markdowner.convert(article)
                 # message = 'Article has been uploaded'
-                context = { 'title':title,
+                context = { 'form':Search(),
+                            'title':title,
                             'article':article_html}
-                return render(request, 'encyclopedia/result.html', context)
+                return render(request, 'encyclopedia/article.html', context)
         pass  
     else:
-        return render(request, 'encyclopedia/save_form.html', {"form":New_form()})
+        return render(request, 'encyclopedia/save_form.html', {"form": Search(),
+                "form_new":New_form()})
 
 def update_article(request, title):
     if request.method == 'GET':
@@ -107,9 +117,10 @@ def update_article(request, title):
             article = util.get_entry(title)
             article_html = markdowner.convert(article)
             # message = "Article has been updated"
-            context = { 'form': Search(),
+            context = { 'title': title,
+                        'form': Search(),
                         'article': article_html}
-            return render(request, 'encyclopedia/result.html', context)
+            return render(request, 'encyclopedia/article.html', context)
 
 def random_article(request):
     queries = util.list_entries()

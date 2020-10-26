@@ -1,9 +1,2 @@
 # CSS
-
-
-
-
-
-
-
-CSS is a language that can be used to add style to an [HTML](/wiki/HTML) page. N'en'en'e! Passion Java!
+CSS is a language that can be used to add style to an [HTML](/wiki/HTML) page. N'en'en'e! Passion Java! Wadii. Zvirisei?
